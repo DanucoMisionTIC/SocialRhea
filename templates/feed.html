@@ -1,0 +1,315 @@
+{% extends 'base.html' %}
+{% block contenido %}
+        <!-- Page Content -->
+        <div class="page-content">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <ul class=flashes>
+            {% for category, message in messages %}
+              <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+            <!--=====================================-->
+            <!--=        Newsfeed  Area Start       =-->
+            <!--=====================================-->
+            <div class="container">
+                <!-- Banner Area Start -->
+                <div class="newsfeed-banner content-bg-wrap" style="background: url(media/forums-forum.png)">
+                    <div class="media">
+                        <div class="pro-icon">
+                            <i class="icofont-megaphone-alt"></i>
+                        </div>
+                        <div class="media-body">
+                            <h3 class="pro-title">Bienvenido a Social Rhea</h3>
+                            <p>Mira lo que tus amigos compartieron hoy.</p>
+                        </div>
+                    </div>
+                    <ul class="animation-img">
+                        <li><img src="{{ url_for('static', filename='assets/img/shape_7.png')}}" alt="shape"></li>
+                        <li data-sal="slide-up" data-sal-duration="500"><img src="{{ url_for('static', filename='assets/img/people_2.png')}}" alt="shape"></li>
+                    </ul>
+                </div>
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="block-box post-input-tab">
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li class="nav-pro" role="presentation" data-toggle="tooltip" data-placement="top" title="MEDIA">
+                                    <a class="nav-link" data-toggle="tab" href="#post-media" role="tab" aria-selected="false"><i class="icofont-image"></i>Subir Foto / Album</a>
+                                </li>
+                              </ul>
+                          <form action="/upload/{{ usuario.Usuario }}" method="POST" enctype="multipart/form-data" class="js-post-form"/>
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active" id="post-media" role="tabpanel">
+                                    <input type="text" name="TituloPost" id="status-input8" class="form-control textarea" placeholder="Titulo" value=""></input>
+                                </div>
+                                <div class="tab-pane fade show active" id="post-media" role="tabpanel">
+                                    <textarea name="status-input" id="status-input2" class="form-control textarea" placeholder="Comparte en que estas pensando... . . ." cols="30" rows="6" value=""></textarea>
+                                </div>
+                            </div>
+                            <!-- Image preview -->
+                            <div id="imagePreview" class="imagePreview"></div>
+                            <div class="post-footer">
+                                <div class="insert-btn">
+                                    <span class="error" aria-live="polite"></span>
+                                    <label for="upload"><a><i class="icofont-photobucket"></i></a></label>
+                                    <input type="file" name="file[]" class="js-imginput d-none"id="upload" accept="image/png, .jpeg, .jpg, image/gif" multiple>
+                                    <a href="#"><i class="icofont-tags"></i></a>
+                                    <a href="#"><i class="icofont-location-pin"></i></a>
+                                    <select id="Visibilidad" name="Visibilidad" class="js-user">1
+                                      <option value="0" selected>Publico</option>
+                                      <option value="1">Privado</option>
+                                  </select>
+                                  <input type="hidden" name="idUser" value="{{usuario.ID_Usuario}}">
+                                    <input type="submit" class="submit-btn js-imgsubmit" value="Enviar Post" onsubmit="validarPost()">
+                                  </div>
+                                </div>
+                          </form>
+                        </div>
+                        {% if output %}
+                        {% for pro in output %}
+                        <!-- {% if pro.Usuario%} -->
+                        <div class="block-box post-view">
+                          <div class="post-header">
+                            <div class="media">
+                              <div class="user-img">
+                                  <img src="/static/uploads/imgusuarios/{{pro.Usuario.Foto }}" width="50" height="50" alt="Aahat">
+                              </div>
+                              <div class="media-body">
+                                  <div class="user-title"><a href="/profile/{{ pro.Usuario.Usuario }}">{{pro.Usuario.Nombres}}</a> <i class="icofont-check"></i> {{pro.post.Titulo}}<a href="#"></a> </div>
+                                  <ul class="entry-meta">
+                                      <li class="meta-privacy"><i class="icofont-world"></i> Publicado el</li>
+                                      <li class="meta-time">{{pro.post.Fecha}}</li>
+                                  </ul>
+                              </div>
+                            </div>
+                          </div>
+                        <div class="post-body">
+                          <h5>{{ pro.post.Descripcion }}</h5>
+                          <div id="carouselExampleIndicators{{ pro.post.ID_Post }}" class="carousel slide" data-ride="carousel">
+                            <ol class="carousel-indicators">
+                              {% for item in pro.fotos %}
+                                {% if loop.index == 1 %}
+                                  <li data-target="#carouselExampleIndicators{{ pro.post.ID_Post }}" data-slide-to="{{loop.index}}" class="active"></li>
+                                  {% else %}
+                                  <li data-target="#carouselExampleIndicators{{ pro.post.ID_Post }}" data-slide-to="{{loop.index}}"></li>
+                                {% endif %}
+                              {% endfor %} 
+                            </ol>
+                            <div class="carousel-inner">
+                              {% for item in pro.fotos %}
+                                {% if loop.index == 1 %}
+                                    <div class="carousel-item active">
+                                    <div class="carousel-item2">
+                                      <img src="/static/uploads/{{ item.Ruta }}" class="d-block w-100" alt="...">
+                                    </div>
+                                    </div>
+                                  {% else %}
+                                  <div class="carousel-item ">
+                                  <div class="carousel-item2 ">
+                                    <img src="/static/uploads/{{ item.Ruta }}" class="d-block w-100" alt="...">
+
+                                  </div>
+                                  </div>
+                                {% endif %}
+                              {% endfor %} 
+                            </div>
+                            <a class="carousel-control-prev" href="#carouselExampleIndicators{{ pro.post.ID_Post }}" role="button" data-slide="prev">
+                              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                              <span class="sr-only">Previous</span>
+                            </a>
+                            <a class="carousel-control-next" href="#carouselExampleIndicators{{ pro.post.ID_Post }}" role="button" data-slide="next">
+                              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                              <span class="sr-only">Next</span>
+                            </a>
+                          </div>
+                        </div>
+                                <div class="post-meta-wrap">
+                                  <div class="post-meta">
+                                    <div class="post-reaction">
+                                      <div class="reaction-icon">
+                                        <img src="/static/assets/img/figure/reaction_1.png" alt="icon">
+                                        <img src="/static/assets/img/figure/reaction_2.png" alt="icon">
+                                        <img src="/static/assets/img/figure/reaction_3.png" alt="icon">
+                                      </div>
+                                      <div class="meta-text">25</div>
+                                    </div>
+                                  </div>
+                                  <div class="post-meta">
+                                    <div class="meta-text">2 Comments</div>
+                                  </div>
+                                </div>
+                                <div class="post-footer">
+                                  <ul>
+                                    <li class="post-react">
+                                      <a href="#"><i class="icofont-thumbs-up"></i>React!</a>
+                                      <ul class="react-list">
+                                        <li><a href="#"><img src="/static/assets/img/figure/reaction_1.png" alt="Like"></a></li>
+                                        <li><a href="#"><img src="/static/assets/img/figure/reaction_2.png" alt="Like"></a></li>
+                                        <li><a href="#"><img src="/static/assets/img/figure/reaction_4.png" alt="Like"></a></li>
+                                        <li><a href="#"><img src="/static/assets/img/figure/reaction_2.png" alt="Like"></a></li>
+                                        <li><a href="#"><img src="/static/assets/img/figure/reaction_7.png" alt="Like"></a></li>
+                                        <li><a href="#"><img src="/static/assets/img/figure/reaction_6.png" alt="Like"></a></li>
+                                        <li><a href="#"><img src="/static/assets/img/figure/reaction_5.png" alt="Like"></a></li>
+                                      </ul>
+                                    </li>
+                                    <li><a href="#"><i class="icofont-comment"></i>Comment</a></li>
+                                    <li class="post-share">
+                                      <a href="javascript:void(0);" class="share-btn"><i class="icofont-share"></i>Share</a>
+                                      <ul class="share-list">
+                                        <li><a href="#" class="color-fb"><i class="icofont-facebook"></i></a></li>
+                                        <li><a href="#" class="color-messenger"><i class="icofont-facebook-messenger"></i></a></li>
+                                        <li><a href="#" class="color-instagram"><i class="icofont-instagram"></i></a></li>
+                                        <li><a href="#" class="color-whatsapp"><i class="icofont-brand-whatsapp"></i></a></li>
+                                        <li><a href="#" class="color-twitter"><i class="icofont-twitter"></i></a></li>
+                                      </ul>
+                                    </li>
+                                  </ul>
+                                </div>
+                              </div>
+                              <!-- {% endif%} -->
+                              {% endfor %}
+                              {% endif %}
+                              <div class="block-box load-more-btn">
+                            <a href="#" class="pro-btn"><i class="icofont-refresh"></i>Load More Posts</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 widget-block widget-break-lg">
+                        <div class="widget widget-author">
+                            <div class="author-heading">
+                                <div class="cover-img">
+                                    <img src="{{ url_for('static', filename='assets/img/figure/shape_12.jpg')}}" alt="cover">
+                                </div>
+                                <div class="profile-img">
+                                    <a href="#">
+                                      <img src="/static/uploads/imgusuarios/{{usuario.Foto }}" width="125" height="125" alt="{{ usuario.Nombres }}">
+                                    </a>
+                                </div>
+                                <div class="profile-name">
+                                    <h4 class="author-name"><a href="#" style="text-transform: capitalize;">{{ usuario.Nombres }}</a></h4>
+                                    <div class="author-location">{{ usuario.Ubicacion }}</div>
+                                </div>
+                            </div>
+                            <ul class="author-badge">
+                                <li><a href="#" class="bg-salmon-gradient"><i class="icofont-star"></i></a></li>
+                                <li><a href="#" class="bg-amethyst-gradient"><i class="icofont-ui-play"></i></a></li>
+                                <li><a href="#" class="bg-sun-gradient"><i class="icofont-squirrel"></i></a></li>
+                                <li><a href="#" class="profile-circle">+5</a></li>
+                            </ul>
+                            <ul class="author-statistics">
+                                <li>
+                                    <a href="#"><span class="pro-number">30</span> <span class="pro-text">POSTS</span></a>
+                                </li>
+                                <li>
+                                    <a href="#"><span class="pro-number">12</span> <span class="pro-text">COMMENTS</span></a>
+                                </li>
+                                <li>
+                                    <a href="#"><span class="pro-number">1,125</span> <span class="pro-text">VIEWS</span></a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="widget widget-memebers">
+                            <div class="widget-heading">
+                                <h3 class="widget-title">Amigos</h3>
+                            </div>
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active" id="newest-member" role="tabpanel">
+                                    <div class="members-list">
+                                    {% if usuarios %}
+                                      {% for usr in usuarios %}
+                                        <div class="media">
+                                            <span class="item-img">
+                                                <a href="/profile/{{usr.Usuario}}">
+                                                    <img width="80" height="80" src="/static/uploads/imgusuarios/{{usr.Foto}}" alt="{{ usr.Nombres }}">
+                                                </a>
+                                              </span>
+                                            <div class="media-body">
+                                                <h4 class="pro-title"><a href="/profile/{{usr.Usuario}}">{{usr.Nombres}}</a></h4>
+                                                <div class="pro-username">{{usr.Usuario}}</div>
+                                                <div class="member-status online"><i class="icofont-check"></i></div>
+                                            </div>
+                                        </div>
+                                      {% endfor %}
+                                      {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- =====================================-->
+            <!--=        Footer Area Start       	=-->
+            <!--=====================================-->
+            <!-- <footer class="footer-wrap footer-dashboard">
+                <div class="main-footer">
+                    <div class="container">
+                        <div class="row row-cols-lg-4 row-cols-sm-2 row-cols-1">
+                            <div class="col">
+                                <div class="footer-box">
+                                    <div class="footer-logo">
+                                        <a href="/"><img src="media/logo_dark.png" alt="Logo"></a>
+                                    </div>
+                                    <p>Dorem ipsum dolor sit amet consec adipisicing elit sed do eiusmod por incidiut labore et loreLorem ipsum kelly amieo dolorey.</p>
+                                </div>
+                            </div>
+                            <div class="col d-flex justify-content-lg-center">
+                                <div class="footer-box">
+                                    <h3 class="footer-title">
+                                        Important Links
+                                    </h3>
+                                    <div class="footer-link">
+                                        <ul>
+                                            <li><a href="/">Home</a></li>
+                                            <li><a href="about-us.html">About us</a></li>
+                                            <li><a href="shop.html">Shop</a></li>
+                                            <li><a href="contact.html">Contacts</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col d-flex justify-content-lg-center">
+                                <div class="footer-box">
+                                    <h3 class="footer-title">
+                                        Community
+                                    </h3>
+                                    <div class="footer-link">
+                                        <ul>
+                                            <li><a href="newsfeed.html">NewsFeed</a></li>
+                                            <li><a href="user-timeline.html">Profile</a></li>
+                                            <li><a href="user-friends.html">Friends</a></li>
+                                            <li><a href="user-groups.html">Groups</a></li>
+                                            <li><a href="forums.html">Forums</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col d-flex justify-content-lg-center">
+                                <div class="footer-box">
+                                    <h3 class="footer-title">
+                                        Followers
+                                    </h3>
+                                    <div class="footer-link">
+                                        <ul>
+                                            <li><a href="https://www.facebook.com/">facebook</a></li>
+                                            <li><a href="https://twitter.com/">twitter</a></li>
+                                            <li><a href="https://www.instagram.com/">instagram</a></li>
+                                            <li><a href="https://www.youtube.com/">Youtube</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <div class="footer-copyright">Copy© cirkle 2021. All Rights Reserved</div>
+                </div>
+            </footer>-->
+
+
+
+        </div>
+        <!-- Chat Modal Here -->
+        {% endblock %}
